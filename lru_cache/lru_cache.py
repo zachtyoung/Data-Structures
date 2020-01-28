@@ -49,9 +49,15 @@ class LRUCache:
             self.size +=1
 
         if self.size == self.limit:
-            self.order.remove_from_head() 
-            self.order.add_to_tail(value) 
+            self.order.remove_from_head() #LFU
+            self.order.add_to_tail(value) #MFU
         else: 
             self.order.add_to_tail(value)
  
+ #1 Are we at max capactiy? Is self.size == self.limit ?
+ #   Yes? - Head needs to be removed, insert value to tail
+ #   No?  - insert to tail
 
+ #Look up key in dictionary
+ # If it exsists update key with new value
+ #If it doesnt exist, insert new key value pair
