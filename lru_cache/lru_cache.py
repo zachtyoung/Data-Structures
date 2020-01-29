@@ -26,8 +26,9 @@ class LRUCache:
     """
     def get(self, key):
         if key in self.storage:
-            self.order.move_to_end(key)
-            return self.storage[key]
+            node = self.storage[key]
+            self.order.move_to_end(node)
+            return node.value[1]
         else:
             return None
 
@@ -43,16 +44,18 @@ class LRUCache:
     """
     def set(self, key, value):
         if key in self.storage: 
-            self.storage[key]= value
-        else: 
-            self.storage[key] = value
-            self.size +=1
-
+            node = self.storage[key]
+            node.value = (key,value)
+            self.order.move_to_end(node)
+            return
         if self.size == self.limit:
-            self.order.remove_from_head() #LFU
-            self.order.add_to_tail(value) #MFU
-        else: 
-            self.order.add_to_tail(value)
+            del self.storage[self.order.head.value[0]]
+            self.order.remove_from_head()
+            self.size -= 1
+
+        self.order.add_to_tail((key,value))
+        self.storage[key] = self.order.tail
+        self.size += 1
  
  #1 Are we at max capactiy? Is self.size == self.limit ?
  #   Yes? - Head needs to be removed, insert value to tail
@@ -61,3 +64,4 @@ class LRUCache:
  #Look up key in dictionary
  # If it exsists update key with new value
  #If it doesnt exist, insert new key value pair
+
